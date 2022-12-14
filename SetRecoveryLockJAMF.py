@@ -7,6 +7,9 @@
 # Created 2022-12-14 by John Bowman
 #
 # Script to set recovery lock for macOS computers in JAMF Pro
+# Requires:
+#   Python3
+#   Python module: requests (can be installed by running 'python3 -m pip install requests')
 #
 # Adapted from https://github.com/shbedev/jamf-recovery-lock
 #
