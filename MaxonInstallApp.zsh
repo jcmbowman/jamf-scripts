@@ -97,18 +97,18 @@ runScript () {
 function verifyLoggedIn() {
     echo "Testing if user '${autoLoginUser}' is already logged in..."
 
-    testUser=$("${mx1app}" user info | awk '/user/ { print $2; }')
+    testUser=$(/usr/bin/sudo -u root "${mx1app}" user info | awk '/user/ { print $2; }')
     if [[ "${testUser}" == "${autoLoginUser}" ]]; then
         echo "User '${autoLoginUser}' already logged in."
     else
         echo "User '${autoLoginUser}' not logged in. Logging in now..."
-        "${autoLoginCommand}"
+        /usr/bin/sudo -u root "${autoLoginCommand}"
     fi
 }
 
 function validateAppName() {
     echo "Testing if app '${appIdentifier}' is available..."
-    testAppMultiline=$("${mx1app}" product list | awk "/${appIdentifier}/ { print \$NF; }")
+    testAppMultiline=$(/usr/bin/sudo -u root "${mx1app}" product list | awk "/${appIdentifier}/ { print \$NF; }")
     testApp=$(echo "${testAppMultiline}" | head -1)
     if [[ "${testApp}" == "${appIdentifier}" ]]; then
         echo "Identifier '${appIdentifier}' is available. Proceeding with install..."
@@ -122,16 +122,17 @@ function validateAppName() {
 function createTempFolder() {
     echo "Creating the temporary folder at ${workingFolder}..."
     mkdir -p "${workingFolder}"
+    chmod 777 "${workingFolder}"
 }
 
 function downloadInstaller() {
     cd "${workingFolder}"
     if [[ "${appVersion}" == "" ]]; then
         echo "Downloading latest version of package that contains '${appIdentifier}'..."
-        "${mx1app}" package download "${appIdentifier}" &> /dev/null
+        /usr/bin/sudo -u root "${mx1app}" package download "${appIdentifier}" &> /dev/null
     else
         echo "Downloading v${appVersion} of package that contains '${appIdentifier}'..."
-        "${mx1app}" package download "${appIdentifier}" "${appVersion}" &> /dev/null
+        /usr/bin/sudo -u root "${mx1app}" package download "${appIdentifier}" "${appVersion}" &> /dev/null
     fi
     installerDownload=$(ls "${workingFolder}")
 
