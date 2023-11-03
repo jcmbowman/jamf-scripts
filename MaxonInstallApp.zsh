@@ -8,7 +8,7 @@
 #
 # HISTORY
 #
-#   Version 0.0.1, 2023-10-26, John Bowman (MacAdmins Slack @JOHNb)
+#   Version 0.0.3, 2023-11-03, John Bowman (MacAdmins Slack @JOHNb)
 #   - Original Version
 #
 ####################################################################################
