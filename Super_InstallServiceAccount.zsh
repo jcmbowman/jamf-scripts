@@ -15,8 +15,8 @@
 ####################################################################################
 # A script that uses the macOSLAPS account to install the super service account    #
 #                                                                                  #
-# NOTE: You MUST exclude the characters "[", "]", "=", and "$" from your macOSLAPS #
-#   password to prevent the password from hanging up the super script.             #
+# NOTE: You MUST exclude the characters "[", "]", "=", "\", and "$" from your      #
+#   macOSLAPS password to prevent the password from hanging up the super script.   #
 ####################################################################################
 
 # Read in command line parameters from Jamf Pro (Parameters 1-3 are predefined)
