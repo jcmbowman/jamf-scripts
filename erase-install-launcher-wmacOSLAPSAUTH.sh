@@ -37,7 +37,7 @@ Parameters without values are ok to put in a single Parameter field in Jamf.
 e.g. this is OK: "--erase --reinstall --confirm"
 
 ADDITIONAL KNOWN LIMITATION
-You MUST exclude the characters "[", "]", "=", "\", and "$" from your macOSLAPS 
+You MUST exclude the characters "[", "]", "=", "\", "!", """, and "$" from your macOSLAPS 
 password to prevent the password from hanging up the erase-install script. This
 list is still tentative - any feedback is appreciated.  
 
