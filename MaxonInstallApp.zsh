@@ -8,8 +8,9 @@
 #
 # HISTORY
 #
-#   Version 0.0.3, 2023-11-03, John Bowman (MacAdmins Slack @JOHNb)
-#   - Original Version
+#   Version 1.0.0, 2024-08-21, John Bowman (MacAdmins Slack @JOHNb)
+#   - v0.0.3 - Original Version
+#   - v1.0.0 - Updated installer method for Red Giant Universe
 #
 ####################################################################################
 # A script to install a specific app from the Maxon One app library                #
@@ -54,8 +55,7 @@ mx1app="${maxonToolsPath}/mx1"
 autoLoginCommand="${maxonToolsPath}/MaxonAppLogin.command"
 
 ### Specify AutoLogin username ###
-autoLoginUser="[your maxon username]"
-
+autoLoginUser="maca_maxon@macomb.edu"
 
 ############## DO NOT EDIT BELOW THIS LINE ##############
 
@@ -108,7 +108,7 @@ function verifyLoggedIn() {
 
 function validateAppName() {
     echo "Testing if app '${appIdentifier}' is available..."
-    testAppMultiline=$(/usr/bin/sudo -u root "${mx1app}" product list | awk "/${appIdentifier}/ { print \$NF; }")
+    testAppMultiline=$(/usr/bin/sudo -u root "${mx1app}" product list | awk "/${appIdentifier} / { print \$NF; }")
     testApp=$(echo "${testAppMultiline}" | head -1)
     if [[ "${testApp}" == "${appIdentifier}" ]]; then
         echo "Identifier '${appIdentifier}' is available. Proceeding with install..."
@@ -214,6 +214,7 @@ function installApp() {
     fi
 
     if [[ "${installerApp:0:6}" == "ZBrush" ]] || 
+        [[ "${installerApp:0:8}" == "Universe" ]] ||
         [[ "${installerApp:0:15}" == "Maxon Cinema 4D" ]]; then
         # Install method for ZBrush and Cinema 4D
         "${workingFolder}/${installerApp}/Contents/MacOS/installbuilder.sh" --mode unattended --unattendedmodeui none
