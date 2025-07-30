@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/bin/zsh --no-rcs
 
 #####################################################################################
 #
@@ -8,9 +8,10 @@
 #
 # HISTORY
 #
-#   Version 1.0.0, 2024-08-21, John Bowman (MacAdmins Slack @JOHNb)
+#   Version 1.1.0, 2025-07-30, John Bowman (MacAdmins Slack @JOHNb)
 #   - v0.0.3 - Original Version
 #   - v1.0.0 - Updated installer method for Red Giant Universe
+#   - v1.1.0 - Updated installer method for Red Giant\
 #
 ####################################################################################
 # A script to install a specific app from the Maxon One app library                #
@@ -116,7 +117,7 @@ function validateAppName() {
         echo "Identifier '${appIdentifier}' not found. Exiting..."
         exit 1
     fi
-    
+
 }
 
 function createTempFolder() {
@@ -213,7 +214,8 @@ function installApp() {
         echo "Performing silent install of v${appVersion} of '${installerApp}'..."
     fi
 
-    if [[ "${installerApp:0:6}" == "ZBrush" ]] || 
+    if [[ "${installerApp:0:6}" == "ZBrush" ]] ||
+        [[ "${installerApp:0:9}" == "Red Giant" ]] ||
         [[ "${installerApp:0:8}" == "Universe" ]] ||
         [[ "${installerApp:0:15}" == "Maxon Cinema 4D" ]]; then
         # Install method for ZBrush and Cinema 4D
