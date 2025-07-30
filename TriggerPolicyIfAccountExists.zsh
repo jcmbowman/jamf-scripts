@@ -138,6 +138,7 @@ waitUntilUserExists () {
         sleep 15
         ((count++))
         if [[ \$count -gt 60 ]]; then
+            cleanUpScript
             exit 1
         fi
     done
