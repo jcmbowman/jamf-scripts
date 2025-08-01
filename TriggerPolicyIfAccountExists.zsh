@@ -8,7 +8,8 @@
 	Macomb Community College
 	jcmbowman@gmail.com
 
-	Originally created: 2025-07-29
+	Created:        2025-07-29
+    Latest Update:  2025-07-31
 
 	Purpose:
     When a designated user is created, run jamf recon, then trigger a
@@ -93,7 +94,7 @@ organizationReverseDomain="${6:-"edu.macomb"}"
 # Global Variables
 scriptFolder="/Library/Management/$organizationReverseDomain.trigger-$policyToTrigger"
 scriptName="trigger-$policyToTrigger.zsh"
-plistName="$organizationReverseDomain.trigger-$policyToTrigger.plist"
+plistName="$organizationReverseDomain.trigger-$policyToTrigger"
 
 runScript () {
     createTriggerPolicyScript
@@ -161,11 +162,11 @@ cleanUpScript() {
     # attempt to delete enclosing directory
     /bin/rmdir "${scriptFolder}"
 
-    # delete the launch daemon plist
-    /bin/rm "/Library/LaunchDaemons/$plistName"
-
     # kill the launch daemon process
-    /bin/launchctl remove "$organizationReverseDomain.trigger-$policyToTrigger"
+    /bin/launchctl remove "$$plistName"
+
+    # delete the launch daemon plist
+    /bin/rm "/Library/LaunchDaemons/$plistName.plist"
 }
 
 runScript
@@ -174,13 +175,12 @@ EOF
 
     # set correct ownership and permissions on trigger-<policyToTrigger>.zsh script
     /usr/sbin/chown root:wheel "${scriptFolder}/$scriptName" && /bin/chmod +x "${scriptFolder}/$scriptName"
-
 }
 
 createLaunchDaemon() {
     # create $$organizationReverseDomain.trigger-$policyToTrigger.plist launch daemon
 
-    tee /Library/LaunchDaemons/$plistName << EOF
+    tee /Library/LaunchDaemons/$plistName.plist << EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
@@ -191,12 +191,12 @@ createLaunchDaemon() {
 		<string>/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
 	</dict>
 	<key>Label</key>
-	<string>$organizationReverseDomain.trigger-$policyToTrigger</string>
+	<string>$plistName</string>
 	<key>ProgramArguments</key>
 	<array>
 		<string>/bin/zsh</string>
 		<string>-c</string>
-		<string>"${scriptFolder}/$scriptName"</string>
+		<string>${scriptFolder}/$scriptName</string>
 	</array>
 	<key>RunAtLoad</key>
 	<true/>
@@ -205,13 +205,12 @@ createLaunchDaemon() {
 EOF
 
     # set correct ownership and permissions on launch daemon
-    /usr/sbin/chown root:wheel /Library/LaunchDaemons/$plistName && /bin/chmod 644 /Library/LaunchDaemons/$plistName
-
+    /usr/sbin/chown root:wheel /Library/LaunchDaemons/$plistName.plist && /bin/chmod 644 /Library/LaunchDaemons/$plistName.plist
 }
 
 loadLaunchDaemon() {
     # start launch daemon after installation
-    /bin/launchctl bootstrap system /Library/LaunchDaemons/$plistName && /bin/launchctl start /Library/LaunchDaemons/$plistName
+    /bin/launchctl bootstrap system /Library/LaunchDaemons/$plistName.plist && /bin/launchctl start $plistName
 }
 
 runScript
