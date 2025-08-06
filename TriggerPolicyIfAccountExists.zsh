@@ -9,7 +9,7 @@
 	jcmbowman@gmail.com
 
 	Created:        2025-07-29
-    Latest Update:  2025-07-31
+    Latest Update:  2025-08-05
 
 	Purpose:
     When a designated user is created, run jamf recon, then trigger a
@@ -122,7 +122,7 @@ checkIfUserExists() {
     User="\${1}"
     local UserExists=false
 
-    testUser=\$( id "\${User}" 2>&1 )
+    testUser=\$( /usr/bin/id "\${User}" 2>&1 )
     if [[ "\${testUser}" == "id: \${User}: no such user" ]]; then
         a=0
     else
@@ -134,14 +134,16 @@ checkIfUserExists() {
 waitUntilUserExists () {
     User="\${1}"
     count=0
-    userExists=\$( checkIfUserExists "\${User}" )
+    local UserExists=false
     until \$userExists; do
-        sleep 15
+        /bin/sleep 15
         ((count++))
+        echo "Retry count is \$count"
         if [[ \$count -gt 60 ]]; then
             cleanUpScript
             exit 1
         fi
+        userExists=\$( checkIfUserExists "\${User}" )
     done
 }
 
@@ -151,8 +153,8 @@ triggerJamfRecon() {
 
 triggerJamfPolicy() {
     policy="\${1}"
-    # Fire off the Jamf policy using detached execution.
-    /usr/bin/nohup /usr/bin/sudo /usr/local/bin/jamf policy -trigger "\${policy}" > /dev/null 2>&1 &
+    # Fire off the specified Jamf policy.
+    /usr/bin/sudo /usr/local/bin/jamf policy -trigger "\${policy}"
 }
 
 cleanUpScript() {
@@ -163,7 +165,7 @@ cleanUpScript() {
     /bin/rmdir "${scriptFolder}"
 
     # kill the launch daemon process
-    /bin/launchctl remove "$$plistName"
+    /bin/launchctl remove "$plistName"
 
     # delete the launch daemon plist
     /bin/rm "/Library/LaunchDaemons/$plistName.plist"
@@ -200,6 +202,11 @@ createLaunchDaemon() {
 	</array>
 	<key>RunAtLoad</key>
 	<true/>
+
+    <key>StandardOutPath</key>
+    <string>/var/log/$plistName.log</string>
+    <key>StandardErrorPath</key>
+    <string>/var/log/$plistName.err</string>
 </dict>
 </plist>
 EOF
